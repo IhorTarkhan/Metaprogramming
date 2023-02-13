@@ -19,11 +19,11 @@ class Engine:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_UP or event.key == pg.K_w:
                     self.state.direction = Direction.UP
-                if event.key == pg.K_DOWN or event.key == pg.K_s:
+                elif event.key == pg.K_DOWN or event.key == pg.K_s:
                     self.state.direction = Direction.DOWN
-                if event.key == pg.K_LEFT or event.key == pg.K_a:
+                elif event.key == pg.K_LEFT or event.key == pg.K_a:
                     self.state.direction = Direction.LEFT
-                if event.key == pg.K_RIGHT or event.key == pg.K_d:
+                elif event.key == pg.K_RIGHT or event.key == pg.K_d:
                     self.state.direction = Direction.RIGHT
 
         self.update_state_per_frame()
@@ -35,7 +35,20 @@ class Engine:
         #                 ((0, 100), (0, 200), (200, 200), (200, 300), (300, 150), (200, 0), (200, 100)))
 
     def update_state_per_frame(self):
-        self.ball.atomic_move()
+        ball_state = self.state.ball
+        direction = self.state.direction
+
+        ball_state.x += ball_state.velocity_x
+        ball_state.y += ball_state.velocity_y
+
+        if direction == Direction.UP:
+            ball_state.velocity_y -= 1
+        elif direction == Direction.DOWN:
+            ball_state.velocity_y += 1
+        elif direction == Direction.LEFT:
+            ball_state.velocity_x -= 1
+        elif direction == Direction.RIGHT:
+            ball_state.velocity_x += 1
 
     def run(self) -> None:
         pg.init()
