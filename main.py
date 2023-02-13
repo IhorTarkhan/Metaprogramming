@@ -1,4 +1,4 @@
-from Visualization import Visualization
+from Engine import Engine
 
 if __name__ == "__main__":
-    Visualization().run()
+    Engine().run()
