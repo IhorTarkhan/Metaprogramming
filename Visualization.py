@@ -25,6 +25,7 @@ class Visualization:
         ball_x = int(width / 2 + ball_position_radius * math.sin(ball_position_angle))
         ball_y = int(height / 2 + ball_position_radius * math.cos(ball_position_angle))
         self.ball = Ball(ball_x, ball_y, acceleration_y=1)
+        self.is_end = False
 
     def update(self) -> bool:
         for event in pg.event.get():
@@ -39,6 +40,13 @@ class Visualization:
                     self.ball.gravity_left()
                 if event.key == pg.K_RIGHT or event.key == pg.K_d:
                     self.ball.gravity_right()
+        if self.is_end:
+            font = pg.font.Font("freesansbold.ttf", 32)
+            text = font.render("Game ended", True, (0, 255, 0), (0, 0, 128))
+            text_rect = text.get_rect()
+            text_rect.center = self.center
+            self.screen.blit(text, text_rect)
+            return False
 
         self.ball.atomic_move()
 
@@ -46,6 +54,13 @@ class Visualization:
         pg.draw.circle(self.screen, (0, 255, 0), self.center, self.radius, width=3)
         pg.draw.arc(self.screen, (0, 0, 0), self.circumscribed_rect, self.hole_start_angle, self.hole_stop_angle, 3)
         pg.draw.circle(self.screen, (0, 0, 255), self.ball.position(), 3)
+        pg.draw.polygon(self.screen, (0, 0, 0),
+                        ((0, 100), (0, 200), (200, 200), (200, 300), (300, 150), (200, 0), (200, 100)))
+
+        dx = self.ball.x - self.center[0]
+        dy = self.ball.y - self.center[1]
+        if int(math.sqrt(dx * dx + dy * dy)) >= self.radius:
+            self.is_end = True
 
     def run(self) -> None:
         pg.init()
