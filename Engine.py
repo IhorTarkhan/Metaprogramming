@@ -4,6 +4,7 @@ from pygame.event import Event
 from state.Direction import Direction
 from state.MainState import MainState
 from visualization.BallVisualization import BallVisualization
+from visualization.DirectionArrowVisualization import DirectionArrowVisualization
 from visualization.WallsVisualization import WallsVisualization
 
 
@@ -13,6 +14,18 @@ class Engine:
         self.screen = pg.display.set_mode([self.state.screen.width, self.state.screen.height])
         self.walls_visualization = WallsVisualization(self.screen, self.state)
         self.ball_visualization = BallVisualization(self.screen)
+        self.direction_arrow_visualization = DirectionArrowVisualization(self.screen)
+
+    def run(self) -> None:
+        pg.init()
+        while True:
+            events = pg.event.get()
+            if any(e.type == pg.QUIT for e in events):
+                break
+            self.handle_frame(events)
+            pg.display.update()
+            pg.time.delay(100)
+        pg.quit()
 
     def handle_frame(self, events: list[Event]):
         for event in events:
@@ -31,8 +44,7 @@ class Engine:
         self.screen.fill((255, 255, 255))
         self.walls_visualization.visualize()
         self.ball_visualization.visualize(self.state)
-        # pg.draw.polygon(self.screen, (0, 0, 0),
-        #                 ((0, 100), (0, 200), (200, 200), (200, 300), (300, 150), (200, 0), (200, 100)))
+        self.direction_arrow_visualization.visualize(self.state)
 
     def update_state_per_frame(self):
         ball_state = self.state.ball
@@ -49,14 +61,3 @@ class Engine:
             ball_state.velocity_x -= 1
         elif direction == Direction.RIGHT:
             ball_state.velocity_x += 1
-
-    def run(self) -> None:
-        pg.init()
-        while True:
-            events = pg.event.get()
-            if any(e.type == pg.QUIT for e in events):
-                break
-            self.handle_frame(events)
-            pg.display.update()
-            pg.time.delay(100)
-        pg.quit()
