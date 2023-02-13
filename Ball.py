@@ -1,7 +1,3 @@
-import pygame as pg
-from pygame import Surface
-
-
 class Ball:
     def __init__(self,
                  x: int, y: int,
@@ -36,5 +32,5 @@ class Ball:
         self.acceleration_x = 1
         self.acceleration_y = 0
 
-    def draw(self, screen: Surface):
-        pg.draw.circle(screen, (0, 0, 255), (self.x, self.y), 3)
+    def position(self):
+        return self.x, self.y
