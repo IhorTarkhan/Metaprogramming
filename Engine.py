@@ -17,7 +17,6 @@ class Engine:
             events = pg.event.get()
             if any(e.type == pg.QUIT for e in events):
                 break
-            self.visualization.visualize()
             self.handle_frame(events)
             self.visualization.visualize()
             pg.display.update()
