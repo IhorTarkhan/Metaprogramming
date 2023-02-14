@@ -19,6 +19,7 @@ class Engine:
                 break
             self.visualization.visualize()
             self.handle_frame(events)
+            self.visualization.visualize()
             pg.display.update()
             pg.time.delay(300)
         pg.quit()
