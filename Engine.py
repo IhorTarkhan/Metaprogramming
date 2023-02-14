@@ -3,18 +3,13 @@ from pygame.event import Event
 
 from state.Direction import Direction
 from state.MainState import MainState
-from visualization.BallVisualization import BallVisualization
-from visualization.DirectionArrowVisualization import DirectionArrowVisualization
-from visualization.WallsVisualization import WallsVisualization
+from visualization.MainVisualization import MainVisualization
 
 
 class Engine:
     def __init__(self):
         self.state = MainState()
-        self.screen = pg.display.set_mode([self.state.screen.width, self.state.screen.height])
-        self.walls_visualization = WallsVisualization(self.screen, self.state)
-        self.ball_visualization = BallVisualization(self.screen)
-        self.direction_arrow_visualization = DirectionArrowVisualization(self.screen)
+        self.visualization = MainVisualization(self.state)
 
     def run(self) -> None:
         pg.init()
@@ -22,9 +17,10 @@ class Engine:
             events = pg.event.get()
             if any(e.type == pg.QUIT for e in events):
                 break
+            self.visualization.visualize()
             self.handle_frame(events)
             pg.display.update()
-            pg.time.delay(100)
+            pg.time.delay(300)
         pg.quit()
 
     def handle_frame(self, events: list[Event]):
@@ -39,14 +35,6 @@ class Engine:
                 elif event.key == pg.K_RIGHT or event.key == pg.K_d:
                     self.state.direction = Direction.RIGHT
 
-        self.update_state_per_frame()
-
-        self.screen.fill((255, 255, 255))
-        self.walls_visualization.visualize()
-        self.ball_visualization.visualize(self.state)
-        self.direction_arrow_visualization.visualize(self.state)
-
-    def update_state_per_frame(self):
         ball_state = self.state.ball
         direction = self.state.direction
 
