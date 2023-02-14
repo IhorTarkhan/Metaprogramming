@@ -1,5 +1,6 @@
-import pygame
+import math
 
+import pygame
 import pymunk
 from pymunk import Vec2d
 
@@ -12,7 +13,7 @@ def flipy(y):
 
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((900, 600))
+    screen = pygame.display.set_mode((600, 600))
     clock = pygame.time.Clock()
     running = True
 
@@ -24,6 +25,27 @@ def main():
     line_point1 = None
     static_lines = []
 
+    # poly_dims = [(150, 100), (50, 100), (50, 150), (150, 150)]
+    poly_dims = []
+    r = 250
+    n = 30
+    min_angle = 2 * math.pi / n
+    for i in range(n):
+        x = r * math.sin(min_angle * i) + 300
+        y = r * math.cos(min_angle * i) + 300
+        poly_dims.append((x, y))
+
+    pd = list(map(lambda point: (point[X], flipy(point[Y])), poly_dims))
+    for i in range(n - 1):
+        shape = pymunk.Segment(space.static_body, pd[i], pd[i + 1], 0.0)
+        shape.elasticity = 1
+        space.add(shape)
+        # x = r * math.sin(min_angle * i) + 300
+        # y = r * math.cos(min_angle * i) + 300
+        # poly_dims.append((x, y))
+    # shape = pymunk.Poly(space.static_body, pd)
+    # space.add(shape)
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -33,9 +55,7 @@ def main():
                 body = pymunk.Body(10, 10)
                 body.position = p
                 shape = pymunk.Circle(body, 10)
-                shape.friction = 0.5
-                shape.collision_type = 2
-                shape.density = 1
+                shape.collision_type = 1
                 shape.elasticity = 1
                 space.add(body, shape)
                 balls.append(shape)
@@ -54,6 +74,10 @@ def main():
         space.step(1.0 / 60.0)
 
         screen.fill(pygame.Color("white"))
+        # pygame.draw.circle(screen, pygame.Color("black"), (450, 300), 100, 2)
+        # pygame.draw.polygon(screen, (0, 0, 0), poly_dims)
+        for i in range(n - 1):
+            pygame.draw.line(screen, pygame.Color("black"), poly_dims[i], poly_dims[i + 1])
 
         for ball in balls:
             r = ball.radius
