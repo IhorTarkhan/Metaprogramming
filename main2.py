@@ -23,7 +23,6 @@ def main():
 
     line_point1 = None
     static_lines = []
-    run_physics = True
 
     while running:
         for event in pygame.event.get():
@@ -36,6 +35,8 @@ def main():
                 shape = pymunk.Circle(body, 10)
                 shape.friction = 0.5
                 shape.collision_type = 2
+                shape.density = 1
+                shape.elasticity = 1
                 space.add(body, shape)
                 balls.append(shape)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
@@ -45,15 +46,12 @@ def main():
                 if line_point1 is not None:
                     line_point2 = Vec2d(event.pos[X], flipy(event.pos[Y]))
                     shape = pymunk.Segment(space.static_body, line_point1, line_point2, 0.0)
-                    shape.friction = 0.99
+                    shape.elasticity = 1
                     space.add(shape)
                     static_lines.append(shape)
                     line_point1 = None
 
-        if run_physics:
-            dt = 1.0 / 60.0
-            for x in range(1):
-                space.step(dt)
+        space.step(1.0 / 60.0)
 
         screen.fill(pygame.Color("white"))
 
