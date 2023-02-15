@@ -47,12 +47,15 @@ class Engine:
         walls = []
 
         center = VectorPG(self.screen.get_width() / 2, self.screen.get_height() / 2)
+        rand_angle = 2 * math.pi * random.random()
         r = min(center) * 0.9
         n = 30
         min_angle = 2 * math.pi / n
         for i in range(n - 2):
-            p1 = VectorPG(r * math.sin(min_angle * i), r * math.cos(min_angle * i)) + center
-            p2 = VectorPG(r * math.sin(min_angle * (i + 1)), r * math.cos(min_angle * (i + 1))) + center
+            angle1 = min_angle * i + rand_angle
+            angle_2 = min_angle * (i + 1) + rand_angle
+            p1 = VectorPG(r * math.sin(angle1), r * math.cos(angle1)) + center
+            p2 = VectorPG(r * math.sin(angle_2), r * math.cos(angle_2)) + center
             shape = pymunk.Segment(self.space.static_body, self.to_pm(p1), self.to_pm(p2), 0.0)
             shape.elasticity = 1
             self.space.add(shape)
