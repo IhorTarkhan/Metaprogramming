@@ -4,7 +4,6 @@ import random
 import pygame
 import pymunk
 from pygame import Vector2 as VectorPG, Color
-from pygame.event import Event
 from pymunk import Vec2d as VectorPM
 
 from Direction import Direction
@@ -68,14 +67,12 @@ class Engine:
             events = pygame.event.get()
             if any(e.type == pygame.QUIT for e in events):
                 break
-            self.handle_frame(events)
-            pygame.display.set_caption("FPS: " + str(int(self.clock.get_fps() * 10) / 10))
-            pygame.display.update()
-            self.space.step(1 / 60)
+            self.step(events)
+            self.render()
             self.clock.tick(60)
         pygame.quit()
 
-    def handle_frame(self, events: list[Event]):
+    def step(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
@@ -90,14 +87,18 @@ class Engine:
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.direction = Direction.RIGHT
                     self.space.gravity = VectorPM(g, 0)
+        self.space.step(1 / 60)
 
+    def render(self):
         self.screen.fill(Color("WHITE"))
         pygame.draw.circle(self.screen, Color("BLUE"), self.to_pg(self.ball.body.position), self.ball.radius)
         for w in self.walls:
             pygame.draw.line(self.screen, Color("BLACK"), self.to_pg(w.a), self.to_pg(w.b))
-        self.draw_direction_arrow()
+        self.render_direction_arrow()
+        pygame.display.set_caption("FPS: " + str(int(self.clock.get_fps() * 10) / 10))
+        pygame.display.update()
 
-    def draw_direction_arrow(self):
+    def render_direction_arrow(self):
         points = [(0, -20), (15, 0), (5, 0), (5, 20), (-5, 20), (-5, 0), (-15, 0)]
         if self.direction == Direction.UP:
             rotate_angle = 0
